@@ -172,21 +172,21 @@ class Graph:
     #     - _vertices:
     #         A collection of the vertices contained in this graph.
     #         Maps item to _Vertex object.
-    _vertices: dict[Any, _Vertex]
+    vertices: dict[Any, _Vertex]
 
     def __init__(self) -> None:
         """Initialize an empty graph (no vertices or edges)."""
-        self._vertices = {}
+        self.vertices = {}
 
     def add_vertex(self, item: Any, kind:Any) -> None:
         """
         Add a vertex with the given item to this graph. The new vertex is not adjacent to any other vertices.
 
         Preconditions:
-            - item not in self._vertices
+            - item not in self.vertices
         """
-        if item not in self._vertices:
-            self._vertices[item] = _Vertex(item, set(), kind)
+        if item not in self.vertices:
+            self.vertices[item] = _Vertex(item, set(), kind)
 
     def add_edge(self, item1: Any, item2: Any) -> None:
         """
@@ -196,9 +196,9 @@ class Graph:
         Preconditions:
             - item1 != item2
         """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
-            v2 = self._vertices[item2]
+        if item1 in self.vertices and item2 in self.vertices:
+            v1 = self.vertices[item1]
+            v2 = self.vertices[item2]
             v1.neighbours.add(v2)
             v2.neighbours.add(v1)
         else:
@@ -209,8 +209,8 @@ class Graph:
         Return whether item1 and item2 are adjacent vertices in this graph. Return False if item1 or item2 do not
         appear as vertices in this graph.
         """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
+        if item1 in self.vertices and item2 in self.vertices:
+            v1 = self.vertices[item1]
             return any(v2.item == item2 for v2 in v1.neighbours)
         else:
             return False
@@ -220,8 +220,8 @@ class Graph:
         Return whether item1 and item2 are connected vertices in this graph. Return False if item1 or item2 do not
         appear as vertices in this graph.
         """
-        if item1 in self._vertices and item2 in self._vertices:
-            v1 = self._vertices[item1]
+        if item1 in self.vertices and item2 in self.vertices:
+            v1 = self.vertices[item1]
             return v1.check_connected(item2, set())  # Pass in an empty "visited" set
         else:
             return False
@@ -233,8 +233,8 @@ class Graph:
         Preconditions:
             - item1.kind == "name" and item2.kind == name
         """
-        if item1 in self._vertices and item2 in self._vertices:
-                return self._vertices[item1].score_popular(self._vertices[item2])
+        if item1 in self.vertices and item2 in self.vertices:
+                return self.vertices[item1].score_popular(self.vertices[item2])
         else:
             raise ValueError
 
@@ -245,8 +245,8 @@ class Graph:
         Preconditions:
             - item1.kind == "name" and item2.kind == name
         """
-        if item1 in self._vertices and item2 in self._vertices:
-                return self._vertices[item1].score_unpopular(self._vertices[item2])
+        if item1 in self.vertices and item2 in self.vertices:
+                return self.vertices[item1].score_unpopular(self.vertices[item2])
         else:
             raise ValueError
 
@@ -257,8 +257,8 @@ class Graph:
         Preconditions:
             - item1.kind == "name" and item2.kind == name
         """
-        if item1 in self._vertices and item2 in self._vertices:
-                return self._vertices[item1].score_custom(self._vertices[item2],
+        if item1 in self.vertices and item2 in self.vertices:
+                return self.vertices[item1].score_custom(self.vertices[item2],
                                                           first_choice, second_choice, last_choice)
         else:
             raise ValueError

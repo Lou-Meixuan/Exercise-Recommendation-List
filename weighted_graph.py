@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import Optional, Any
+from similarity_score_calculation import Graph, _Vertex
 
 
 class Exercise:
@@ -36,8 +37,7 @@ class Exercise:
     images: list[str]
 
     def __init__(self, user_id, name, force, level, mechanic, equipment, primary_muscles, secondary_muscles,
-                 instructions,
-                 category, images) -> None:
+                 instructions, category, images) -> None:
         """Initialize an exercise with the given properties"""
         self.user_id = user_id
         self.name = name
@@ -52,13 +52,14 @@ class Exercise:
         self.images = images
 
 
+"""
 class Vertex:
-    """A vertex or a node in the graph holding an item of the exercise class"
+    A vertex or a node in the graph holding an item of the exercise class"
     
     instance Attributes:
     - item: The item of the exercise class
     - neighbours: The neighbours of the node"
-    """
+    
     item: Exercise
     neighbours: List["Vertex"] # Fwd reference string to avoid circular import
 
@@ -73,20 +74,52 @@ class Vertex:
     def remove_neighbour(self, neighbour: Vertex) -> None:
         self.neighbours.remove(neighbour)
         neighbour.neighbours.remove(self)
+"""
 
 
-class Graph:
+class WeightedGraph:
     """A weighted graph holding the vertices of the exercise class"
     
     Instance Attributes:
-    - _vertices: The vertices of the graph
-    - edges: The edges of the graph
+    -
     """
+    _vertices: dict[Any, _Vertex]
+    original_graph: Graph
+    
+    def __init__(self, original_graph) -> None:
+        self._vertices = {}
+        self.original_graph = original_graph
 
-    _vertices: List[Vertex]
+    def add_vertex(self, item: Any, kind:Any) -> None:
+        """
+        Add a vertex with the given item to this graph. The new vertex is not adjacent to any other vertices.
+
+        Preconditions:
+            - item not in self._vertices
+        """
+        if item not in self._vertices:
+            self._vertices[item] = _Vertex(item, set(), kind)
+
+    def add_edge(self, item1: Any, item2: Any) -> None:
+        """
+        Add an edge between the two vertices with the given items in this graph. Raise a ValueError if item1 or item2
+        do not appear as vertices in this graph.
+
+        Preconditions:
+            - item1 != item2
+        """
+        if item1 in self._vertices and item2 in self._vertices:
+            v1 = self._vertices[item1]
+            v2 = self._vertices[item2]
+            v1.neighbours.add(v2)
+            v2.neighbours.add(v1)
+        else:
+            raise ValueError
+
+    def get_name_vertices(self) -> None:
+        for v in self.original_graph.vertices:
+            if self.original_graph.vertices[v].kind == "name":
+                self.add_vertex(v, "name")
     
-    def __init__(self) -> None:
-        self._vertices = []
-    
-    def add_vertex(self, exercise: Exercise) -> None: # not sure about here
-        self._vertices.append(Vertex(exercise))
+    def popular_weighted_graph(self):
+
