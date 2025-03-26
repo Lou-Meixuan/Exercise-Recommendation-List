@@ -3,7 +3,8 @@ from typing import Any, Optional
 import math
 
 class Exercise:
-    """An exercise and its categories
+    """
+    An exercise and its categories
 
     Instance Attributes:
     - user_id: A unique identifier for the exercise
@@ -87,7 +88,8 @@ class _Vertex:
             return False
 
     def score_popular(self, other: _Vertex) -> float:
-        """Return the similarity score between this vertex and other.
+        """
+        Return the similarity score between this vertex and other.
         sim(v1, v2) = 0, if any of v1, v2 doesn’t have neighbour;
         sim(v1, v2) = number of vertices adjacent to both v1 and v2(intersection)/ number of vertices adjacent to v1
         or v2(union), otherwise
@@ -107,7 +109,8 @@ class _Vertex:
             return len(adjacent_to_both) / len(all_adjacent)
 
     def score_unpopular(self, other: _Vertex) -> float:
-        """Return the similarity score. It is defined as the sum of the inverse logarithmic degree centrality of the
+        """
+        Return the similarity score. It is defined as the sum of the inverse logarithmic degree centrality of the
         neighbours shared by the two nodes. The definition is based on the concept that common elements with very large
         neighbourhoods are less significant when predicting a connection between two nodes compared with elements
         shared between a small number of nodes.
@@ -129,7 +132,8 @@ class _Vertex:
             return sum([1 / math.log(each, 10) for each in number_list])
 
     def score_custom(self, other:_Vertex, first_choice:str, second_choice:str, last_choice:str) -> float:
-        """Return the similarity score where it's based on the user customization. User will enter three choices, where
+        """
+        Return the similarity score where it's based on the user customization. User will enter three choices, where
         indicates the primary aspect, secondary aspect and the trivial aspect that the value for their exercise.
         The first choice will be valued as 6, the second choice will be valued as 4, and the last choice will be valued
         as 1, and other aspects will be valued as 2 each.
@@ -157,7 +161,8 @@ class _Vertex:
 
 
 class Graph:
-    """A normal graph.
+    """
+    A normal graph.
 
     Representation Invariants:
         - all(item == self._vertices[item].item for item in self._vertices)
@@ -173,7 +178,8 @@ class Graph:
         self._vertices = {}
 
     def add_vertex(self, item: Any, kind:Any) -> None:
-        """Add a vertex with the given item to this graph. The new vertex is not adjacent to any other vertices.
+        """
+        Add a vertex with the given item to this graph. The new vertex is not adjacent to any other vertices.
 
         Preconditions:
             - item not in self._vertices
@@ -182,8 +188,9 @@ class Graph:
             self._vertices[item] = _Vertex(item, set(), kind)
 
     def add_edge(self, item1: Any, item2: Any) -> None:
-        """Add an edge between the two vertices with the given items in this graph. Raise a ValueError if item1 or item2
-         do not appear as vertices in this graph.
+        """
+        Add an edge between the two vertices with the given items in this graph. Raise a ValueError if item1 or item2
+        do not appear as vertices in this graph.
 
         Preconditions:
             - item1 != item2
@@ -197,7 +204,8 @@ class Graph:
             raise ValueError
 
     def adjacent(self, item1: Any, item2: Any) -> bool:
-        """Return whether item1 and item2 are adjacent vertices in this graph. Return False if item1 or item2 do not
+        """
+        Return whether item1 and item2 are adjacent vertices in this graph. Return False if item1 or item2 do not
         appear as vertices in this graph.
         """
         if item1 in self._vertices and item2 in self._vertices:
@@ -207,7 +215,8 @@ class Graph:
             return False
 
     def connected(self, item1: Any, item2: Any) -> bool:
-        """Return whether item1 and item2 are connected vertices in this graph. Return False if item1 or item2 do not
+        """
+        Return whether item1 and item2 are connected vertices in this graph. Return False if item1 or item2 do not
         appear as vertices in this graph.
         """
         if item1 in self._vertices and item2 in self._vertices:
