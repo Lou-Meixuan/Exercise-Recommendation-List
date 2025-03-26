@@ -87,14 +87,14 @@ class _Vertex:
                         return True
             return False
 
-    def score_popular(self, other: _Vertex) -> float:
+    def score_popular(self, other: Any) -> float:
         """
         Return the similarity score between this vertex and other.
         sim(v1, v2) = 0, if any of v1, v2 doesn’t have neighbour;
         sim(v1, v2) = number of vertices adjacent to both v1 and v2(intersection)/ number of vertices adjacent to v1
         or v2(union), otherwise
 
-        Representation Invariants:
+        Preconditions:
             - self is not other
             - self.kind == "name"
             - other.kind == "name"
@@ -108,7 +108,7 @@ class _Vertex:
         else:
             return len(adjacent_to_both) / len(all_adjacent)
 
-    def score_unpopular(self, other: _Vertex) -> float:
+    def score_unpopular(self, other: Any) -> float:
         """
         Return the similarity score. It is defined as the sum of the inverse logarithmic degree centrality of the
         neighbours shared by the two nodes. The definition is based on the concept that common elements with very large
@@ -117,7 +117,7 @@ class _Vertex:
         sim(v1, v2) = 0, if d(v1) = 0 or d(v2) = 0
         sim(v1, v2) = the sum of the 1/log(len(w.neighbours)) for w in the intersection of the neighbours of v1 and v2.
 
-        Representation Invariants:
+        Preconditions:
             - self is not other
             - self.kind == "name"
             - other.kind == "name"
@@ -131,13 +131,14 @@ class _Vertex:
         else:
             return sum([1 / math.log(each, 10) for each in number_list])
 
-    def score_custom(self, other:_Vertex, first_choice:str, second_choice:str, last_choice:str) -> float:
+    def score_custom(self, other:Any, first_choice:str, second_choice:str, last_choice:str) -> float:
         """
         Return the similarity score where it's based on the user customization. User will enter three choices, where
         indicates the primary aspect, secondary aspect and the trivial aspect that the value for their exercise.
         The first choice will be valued as 6, the second choice will be valued as 4, and the last choice will be valued
         as 1, and other aspects will be valued as 2 each.
-        Representation Invariants:
+
+        Preconditions:
             - first_choice in ['force', 'level', 'mechanic', 'equipment', 'primary_muscles', 'secondary_muscles']
             - second_choice in ['force', 'level', 'mechanic', 'equipment', 'primary_muscles', 'secondary_muscles']
             - last_choice in ['force', 'level', 'mechanic', 'equipment', 'primary_muscles', 'secondary_muscles']
@@ -225,25 +226,44 @@ class Graph:
         else:
             return False
 
-def load_whole_graph(filename:str) -> Graph:
-    """Return an exercise graph corresponding to the given datasets.
+    def get_score_popular(self, item1: Any, item2: Any, ) -> float:
+        """Return the similarity score of score_popular between the two given items in this graph.
+        Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
 
-    Preconditions:
-        - filename is the path to a html file corresponding to the exercise data
-        - each book ID in reviews_file exists as a book ID in book_names_file
-    """
-    graph = Graph()
-    name_list = ["force", "level", "mechanic", "equipment", "primary_muscles", "secondary_muscles"]
-    with open(filename, 'r') as f:
-        html_string = f.read()
-        for row in html_string:
-            exercise_name = row[1]
-            graph.add_vertex(exercise_name, "name")
-            for index in range(6):
-                prop = row[index + 2]
-                graph.add_vertex(prop, name_list[index])
-                graph.add_edge(exercise_name, prop)
-    return graph
+        Preconditions:
+            - item1.kind == "name" and item2.kind == name
+        """
+        if item1 in self._vertices and item2 in self._vertices:
+                return self._vertices[item1].score_popular(self._vertices[item2])
+        else:
+            raise ValueError
+
+    def get_score_unpopular(self, item1: Any, item2: Any, ) -> float:
+        """Return the similarity score of score_unpopular between the two given items in this graph.
+        Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
+
+        Preconditions:
+            - item1.kind == "name" and item2.kind == name
+        """
+        if item1 in self._vertices and item2 in self._vertices:
+                return self._vertices[item1].score_unpopular(self._vertices[item2])
+        else:
+            raise ValueError
+
+    def get_score_custom(self, item1: Any, item2: Any, first_choice:str, second_choice:str, last_choice:str) -> float:
+        """Return the similarity score between the two given items in this graph.
+        Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
+
+        Preconditions:
+            - item1.kind == "name" and item2.kind == name
+        """
+        if item1 in self._vertices and item2 in self._vertices:
+                return self._vertices[item1].score_custom(self._vertices[item2],
+                                                          first_choice, second_choice, last_choice)
+        else:
+            raise ValueError
+
+
 
 if __name__ == '__main__':
     import doctest
