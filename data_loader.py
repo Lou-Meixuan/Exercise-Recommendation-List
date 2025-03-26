@@ -1,16 +1,9 @@
 import csv
 import importlib.util
 
-# Dynamically load the module from the file "similarity_score_calculation.py"
-spec = importlib.util.spec_from_file_location("similarity_score_calculation", "similarity_score_calculation.py")
-similarity_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(similarity_module)
-
-# Import the classes from the module.
-# (Here, we primarily need the Exercise class to instantiate objects from the CSV data.)
-Exercise = similarity_module.Exercise
-_Vertex = similarity_module._Vertex  # if needed for further processing
-Graph = similarity_module.Graph          # if needed for further processing
+from similarity_score_calculation import Graph
+from similarity_score_calculation import _Vertex
+from similarity_score_calculation import Exercise
 
 def parse_list_field(field_str):
     """
