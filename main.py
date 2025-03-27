@@ -1,7 +1,6 @@
 from similarity_score_calculation import Graph
 from weighted_graph import WeightedGraph, Exercise
 import os
-import json
 
 def load_whole_graph(filename:str) -> Graph:
     """Return an exercise graph corresponding to the given datasets.

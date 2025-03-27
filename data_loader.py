@@ -16,9 +16,10 @@ def parse_list_field(field_str):
     # Split on commas and remove any extra quotes or spaces.
     return [item.strip().strip('"').strip("'") for item in field_str.split(',')]
 
+
 exercises = []
 # Open and read the CSV file.
-with open('cleaned_data.txt', newline='', encoding='utf-8') as file:
+with open('cleaned_data.csv', newline='', encoding='utf-8') as file:
     reader = csv.reader(file)
     header = next(reader)  # Skip the header row.
     # Expected header columns: id,name,force,level,mechanic,equipment,primaryMuscles,secondaryMuscles,instructions,category,images,id
