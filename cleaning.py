@@ -14,7 +14,7 @@ def clean_field(field):
     return field  # Return as-is if not a list
 
 # open input file and create an output CSV
-with open('data_exercises.txt', 'r', encoding='utf-8', newline='') as infile, \
+with open('ugly_data_exercises.txt', 'r', encoding='utf-8', newline='') as infile, \
      open('cleaned_data.csv', 'w', encoding='utf-8', newline='') as outfile:
     
     reader = csv.reader(infile)
