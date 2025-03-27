@@ -63,7 +63,7 @@ class _Vertex:
     """
     item: Any
     neighbours: set[_Vertex]
-    kind:str
+    kind: str
 
     def __init__(self, item: Any, neighbours: set[_Vertex], kind) -> None:
         """Initialize a new vertex with the given item and neighbours."""
@@ -262,7 +262,6 @@ class Graph:
                                                           first_choice, second_choice, last_choice)
         else:
             raise ValueError
-
 
 
 if __name__ == '__main__':

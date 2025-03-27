@@ -1,0 +1,6 @@
+# Workout Wizard library requirements
+
+tkinter
+typing
+csv
+math
