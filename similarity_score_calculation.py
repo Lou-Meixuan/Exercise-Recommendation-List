@@ -20,16 +20,22 @@ import math
 class _Vertex:
     """A vertex or a node in the graph holding an item of the exercise class"
 
-    instance Attributes:
+    Instance Attributes:
     - item: The item of the exercise class
     - neighbours: All the vertices that adjacent to this vertex
+    - kind: The category that the item is belonged to
     """
     item: Any
     neighbours: set[_Vertex]
     kind: str
 
     def __init__(self, item: Any, neighbours: set[_Vertex], kind: str) -> None:
-        """Initialize a new vertex with the given item and neighbours."""
+        """
+        Initialize a new vertex with the given item and neighbours.
+
+        Preconditions:
+            - kind in ['name', 'force', 'level', 'mechanic', 'equipment', 'muscles']
+        """
         self.item = item
         self.neighbours = neighbours
         self.kind = kind

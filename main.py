@@ -1,5 +1,4 @@
 from similarity_score_calculation import Graph
-from weighted_graph import WeightedGraph, Exercise
 import os
 
 def load_whole_graph(filename:str) -> Graph:
