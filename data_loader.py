@@ -104,7 +104,7 @@ def create_graph(exercises: list[Exercise]) -> Graph:
         graph.add_vertex(exercise_name, "name")
         for index in range(1, len(lst)):
             the_property = lst[index]
-            if isinstance(list, the_property):
+            if the_property is not None and isinstance(list, the_property):
                 load_lists(the_property, exercise_name, graph)
             elif the_property is not None:
                 graph.add_vertex(the_property, property_list[index])
