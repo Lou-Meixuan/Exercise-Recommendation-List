@@ -14,8 +14,8 @@ root.title("Workout Wizard")
 label = tk.Label(root, text='Workout Wizard', font=("Courier", 30))
 label.pack()
 
-# Extract exercise names from data_loader.py
-exercise_names = [exercise.name for exercise in data_loader.exercises]
+# extract exercise names from data_loader file
+exercise_names = [exercise.name for exercise in data_loader.get_all_exercises()]
 
 # Datatype of menu text for exercise selection
 exercise_clicked = tk.StringVar()
@@ -90,5 +90,4 @@ last_choice_drop.pack(side=tk.LEFT)
 button = tk.Button(root, text="Select Exercise", command=show)
 button.pack()
 
-# Start the GUI event loop
 root.mainloop()
