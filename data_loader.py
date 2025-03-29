@@ -1,5 +1,4 @@
-"""CSC111 Winter 2025 Project2: Recommendation System For Gym Exercises
-
+"""CSC111 Winter 2025 Project2 - Recommendation System For Gym Exercises: Workout Wizard
 Module Description
 ==================
 This module contains the Exercise classes, and the functions for our project
