@@ -19,7 +19,7 @@ class ExerciseRecommendationApp:
         
         self.exercises = data_loader.get_all_exercises()
         self.exercise_names = [exercise.properties[0] for exercise in self.exercises]
-        self.graph = Graph(self.exercises)
+        self.graph = data_loader.create_graph(self.exercises)
 
         # store user selections
         self.selected_exercises = tk.StringVar()
@@ -43,7 +43,7 @@ class ExerciseRecommendationApp:
         # initialize frames
         self.setup_exercise_screen()
         self.setup_calculation_screen()
-        self.setup_recommendation_screen()
+        #self.setup_results_screen()
 
         # start with the exercise frame
         self.show_exercise_screen()
@@ -111,6 +111,121 @@ class ExerciseRecommendationApp:
         self.custom_frame = tk.Frame(self.calculation_frame)
         self.custom_frame.pack(pady=20, fill="x")
 
+        custom_label = tk.Label(self.custom_frame,
+                                text="Custom calculation preferences.\n"
+                                "For more accurate recommendations,\n"
+                                "please do not select any option more than once!",
+                                font=("Helvetica", 14))
+        custom_label.pack(anchor="w")
 
-root = tk.Tk()
-root.mainloop()    
+        # category options 
+        category_options = [
+            "force",
+            "level",
+            "mechanic",
+            "equipment",
+            "primary_muscles",
+            "secondary_muscles"
+        ]
+
+        # first choice
+        first_choice_frame = tk.Frame(self.custom_frame)
+        first_choice_frame.pack(pady=5, fill="x")
+
+        first_choice_label = tk.Label(first_choice_frame,
+                                      text="First priority:",
+                                      font=("Helvetica", 12))
+        first_choice_label.pack(side=tk.LEFT, padx=5)
+
+        first_choice_dropdown = ttk.Combobox(first_choice_frame,
+                                             textvariable=self.first_choice,
+                                             values=category_options,
+                                             width=30)
+        first_choice_dropdown.pack(side=tk.LEFT, padx=5)
+
+        # second choice
+        second_choice_frame = tk.Frame(self.custom_frame)
+        second_choice_frame.pack(fill="x", pady=5)
+        
+        second_choice_label = tk.Label(second_choice_frame, 
+                                       text="Second priority:", 
+                                       font=("Helvetica", 12))
+        second_choice_label.pack(side=tk.LEFT, padx=5)
+        
+        second_choice_dropdown = ttk.Combobox(second_choice_frame, 
+                                            textvariable=self.second_choice,
+                                            values=category_options,
+                                            width=30)
+        second_choice_dropdown.pack(side=tk.LEFT, padx=5)
+
+        # last choice
+        last_choice_frame = tk.Frame(self.custom_frame)
+        last_choice_frame.pack(fill="x", pady=5)
+        
+        last_choice_label = tk.Label(last_choice_frame, 
+                                     text="Third priority:", 
+                                     font=("Helvetica", 12))
+        last_choice_label.pack(side=tk.LEFT, padx=5)
+        
+        last_choice_dropdown = ttk.Combobox(last_choice_frame, 
+                                          textvariable=self.last_choice,
+                                          values=category_options,
+                                          width=30)
+        last_choice_dropdown.pack(side=tk.LEFT, padx=5)
+
+        # HIDE CUSTOM FRAME (only show when custom is selected)
+        self.custom_frame.pack_forget()
+
+        # trace to show/hide
+        self.selected_score_type.trace("w", self.toggle_custom_frame)
+
+        # buttons
+        button_frame = tk.Frame(self.calculation_frame)
+        button_frame.pack()
+
+        back_button = tk.Button(button_frame, text="Back", 
+                                   command=self.show_exercise_screen,
+                                   font=("Helvetica", 12),
+                                   width=15, height=2,
+                                   bg="lightblue", fg="black")
+        back_button.pack(side=tk.LEFT, padx=10)
+
+        calculate_button = tk.Button(button_frame,
+                                     text="Calculate",
+                                     command=self.calculate_and_show_results,
+                                     font=("Helvetica", 12),
+                                     width=15, height=2)
+        calculate_button.pack(side=tk.LEFT, padx=10)
+
+    def calculate_and_show_results(self):
+        pass
+
+    def toggle_custom_frame(self, *args):
+        if self.selected_score_type.get() == "custom":
+            self.custom_frame.pack(fill="x", pady=20,
+                                   after=self.calculation_frame.winfo_children()[2])
+        else:
+            self.custom_frame.pack_forget()
+
+    def show_exercise_screen(self):
+        """Show the exercise screen"""
+        self.calculation_frame.pack_forget()
+        # self.results_frame.pack_forget()
+        self.exercise_frame.pack(fill="both", expand=True)
+
+    def show_calculation_screen(self):
+        """Show the calculation screen"""
+        self.exercise_frame.pack_forget()
+        # self.results_frame.pack_forget()
+        self.calculation_frame.pack(fill="both", expand=True)
+
+    def show_results_screen(self):
+        """Show the results screen"""
+        self.exercise_frame.pack_forget()
+        self.calculation_frame.pack_forget()
+        # self.results_frame.pack(fill="both", expand=True)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ExerciseRecommendationApp(root)
+    root.mainloop()    
