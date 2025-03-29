@@ -187,6 +187,9 @@ class Graph:
         """
         Return whether item1 and item2 are adjacent vertices in this graph. Return False if item1 or item2 do not
         appear as vertices in this graph.
+
+        Preconditions:
+            - item1 in self.vertices and item2 in self.vertices
         """
         if item1 in self.vertices and item2 in self.vertices:
             v1 = self.vertices[item1]
@@ -243,6 +246,9 @@ class Graph:
         Return a recommendation list with length 3. The recommendation list used the 'get_score_popular' method of
         the graph, and generate a list of tuple(index 0 is the similarity score and index 1 is the item of the vertex).
         Then sort the list by index0 of the tuple and return the first three item with large score.
+
+        Preconditions:
+            - name_input in self.vertices
         """
         name_set = self.get_name_vertices()
         lst = []
@@ -258,6 +264,9 @@ class Graph:
         Return a recommendation list with length 3.The recommendation list used the 'get_score_unpopular' method of
         the graph, and generate a list of tuple(index 0 is the similarity score and index 1 is the item of the vertex).
         Then sort the list by index0 of the tuple and return the first three item with large score.
+
+        Preconditions:
+            - name_input in self.vertices
         """
         name_set = self.get_name_vertices()
         lst = []
@@ -276,6 +285,7 @@ class Graph:
 
         Preconditions:
             - All[c in ['force', 'level', 'mechanic', 'equipment', 'muscles'] for c in choice_lst]
+            - name_input in self.vertices
         """
         name_set = self.get_name_vertices()
         lst = []
