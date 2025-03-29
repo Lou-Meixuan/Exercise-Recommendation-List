@@ -2,9 +2,10 @@ import weight_calculation
 import data_loader
 
 Exercise_list = data_loader.get_all_exercises()
-small = Exercise_list[0:10]
+small = Exercise_list
 lst = [x.properties for x in small]
 name = small[0].properties[0]
+print(name)
 na = [x.properties[0] for x in small]
 graph = data_loader.create_graph(small)
 se = graph.get_name_vertices()
