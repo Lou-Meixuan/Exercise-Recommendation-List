@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk  # widgets
 import data_loader
-from similarity_score_calculation import Graph
+from weight_calculation import Graph
 
 class ExerciseRecommendationApp:
     """
@@ -49,12 +49,12 @@ class ExerciseRecommendationApp:
         # frames/screens
         self.exercise_frame = tk.Frame(self.root)
         self.calculation_frame = tk.Frame(self.root)
-        self.recommendation_frame = tk.Frame(self.root)
+        self.results_frame = tk.Frame(self.root)
 
         # initialize frames
         self.setup_exercise_screen()
         self.setup_calculation_screen()
-        #self.setup_results_screen()
+        self.setup_results_screen()
 
         # start with the exercise frame
         self.show_exercise_screen()
@@ -196,7 +196,7 @@ class ExerciseRecommendationApp:
         button_frame.pack()
 
         back_button = tk.Button(button_frame, text="Back", 
-                                   command=self.show_exercise_screen,
+                                   command=self.reset_and_show_exercise_screen,
                                    font=("Helvetica", 12),
                                    width=15, height=2,
                                    bg="lightblue", fg="black")
@@ -221,10 +221,40 @@ class ExerciseRecommendationApp:
                                                 text="Based on your entries: ",
                                                 font=("Helvetica", 14))
         self.selected_exercise_label.pack()
-    
-    
-    def calculate_and_show_results(self):
-        pass
+
+        # results frame
+        results_container = tk.Frame(self.results_frame)
+        results_container.pack(fill="both", expand=True)
+
+        # create a frame for each recommendation (might add pics to each later)
+        self.recommendation_frames = []
+        for i in range(3):
+            rec_frame = tk.Frame(results_container, relief=tk.RIDGE, borderwidth=2)
+            rec_frame.pack(pady=10, fill="x", padx=50)
+            
+            rec_title = tk.Label(rec_frame, text=f"Recommendation {i+1}", font=("Helvetica", 14, "bold"))
+            rec_title.pack(pady=5)
+            
+            rec_name = tk.Label(rec_frame, text="", font=("Helvetica", 12))
+            rec_name.pack(pady=5)
+            
+            self.recommendation_frames.append((rec_frame, rec_name))
+
+        # nav buttons
+        button_frame = tk.Frame(self.results_frame)
+        button_frame.pack()
+
+        back_button = tk.Button(button_frame, text="Back to Calculation",
+                                command=self.show_calculation_screen,
+                                font=("Helvetica", 12),
+                                width=20, height=2)
+        back_button.pack(padx=10, side=tk.LEFT)
+
+        new_search_button = tk.Button(button_frame, text="New Search",
+                                      command=self.show_exercise_screen,
+                                      font=("Helvetica", 12),
+                                      width=20, height=2)
+        new_search_button.pack(padx=10, side=tk.LEFT)
 
     def toggle_custom_frame(self, *args):
         if self.selected_score_type.get() == "custom":
@@ -236,20 +266,63 @@ class ExerciseRecommendationApp:
     def show_exercise_screen(self):
         """Show the exercise screen"""
         self.calculation_frame.pack_forget()
-        # self.results_frame.pack_forget()
+        self.results_frame.pack_forget()
         self.exercise_frame.pack(fill="both", expand=True)
 
     def show_calculation_screen(self):
         """Show the calculation screen"""
         self.exercise_frame.pack_forget()
-        # self.results_frame.pack_forget()
+        self.results_frame.pack_forget()
         self.calculation_frame.pack(fill="both", expand=True)
+
+        # toggle custom based on current selection
+        self.toggle_custom_frame()
 
     def show_results_screen(self):
         """Show the results screen"""
         self.exercise_frame.pack_forget()
         self.calculation_frame.pack_forget()
-        # self.results_frame.pack(fill="both", expand=True)
+        self.results_frame.pack(fill="both", expand=True)
+
+    def reset_and_show_exercise_screen(self):
+        """Reset selections & go back to prev screen"""
+        self.selected_exercises.set("Pick an exercise you enjoy or find rewarding!")
+        self.selected_score_type.set("Pick your preferred recommendation type")
+        self.first_choice.set("Pick your first choice")
+        self.second_choice.set("Pick your second choice")
+        self.last_choice.set("Pick your third choice")
+        self.show_exercise_screen()
+
+    def calculate_and_show_results(self):
+        """Calculate recs and show results"""
+        exercise = self.selected_exercises.get()
+        score_type = self.selected_score_type.get()
+
+        self.selected_exercise_label.config(text=f"Based on your entries: {exercise}")
+
+        recommendations = []
+
+        if score_type == "popular":
+            recommendations = self.graph.popular_recommendation(exercise)
+        elif score_type == "unpopular":
+            recommendations = self.graph.not_popular_recommendation(exercise)
+        elif score_type == "custom":
+            choice_lst = [
+                self.first_choice.get(),
+                self.second_choice.get(),
+                self.last_choice.get()
+            ]
+            recommendations = self.graph.custom_recommendation(exercise, choice_lst)
+        
+        # update frames
+        for i, (_, name_label) in enumerate(self.recommendation_frames):
+            if i < len(recommendations):
+                name_label.config(text=recommendations[i])
+            else:
+                name_label.config(text="No recommendations available :(")
+        
+        # show results screen
+        self.show_results_screen()
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ are expressly prohibited.
 This file is Copyright (c) 2025 CSC111 Student Team: Meixuan Lou, Zimo Huang, Hongyi Mei, Yunji Hwang
 """
 import csv
-from similarity_score_calculation import Graph
+from weight_calculation import Graph
 
 
 class Exercise:

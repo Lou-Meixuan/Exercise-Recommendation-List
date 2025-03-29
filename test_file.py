@@ -1,4 +1,4 @@
-import similarity_score_calculation
+import weight_calculation
 import data_loader
 
 Exercise_list = data_loader.get_all_exercises()
