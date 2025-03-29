@@ -21,3 +21,4 @@ re
 pillow
 python_ta
 os
+PIL

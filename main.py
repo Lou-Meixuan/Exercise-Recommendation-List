@@ -15,6 +15,7 @@ This file is Copyright (c) 2025 CSC111 Student Team: Meixuan Lou, Zimo Huang, Ho
 import tkinter as tk
 from user_interface import ExerciseRecommendationApp
 
+
 root = tk.Tk()
 app = ExerciseRecommendationApp(root)
 root.mainloop()
