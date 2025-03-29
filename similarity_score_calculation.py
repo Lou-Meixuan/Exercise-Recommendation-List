@@ -194,7 +194,7 @@ class Graph:
         else:
             return False
 
-    def get_score_popular(self, item1: Any, item2: Any) -> float:
+    def get_score_popular(self, item1: str, item2: str) -> float:
         """Return the similarity score of score_popular between the two given items in this graph.
         Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
 
@@ -235,7 +235,7 @@ class Graph:
         return_set = set()
         for v in self.vertices:
             if self.vertices[v].kind == "name":
-                return_set.add(v.item)
+                return_set.add(v)
         return return_set
 
     def popular_recommendation(self, name_input: str) -> list:
@@ -245,11 +245,10 @@ class Graph:
         Then sort the list by index0 of the tuple and return the first three item with large score.
         """
         name_set = self.get_name_vertices()
-        input_vertex = self.vertices[name_input]
         lst = []
         for name in name_set:
             if name != name_input:
-                score = self.get_score_popular(input_vertex, self.vertices[name])
+                score = self.get_score_popular(name_input, name)
                 lst.append((score, name))
         return_lst = sorted(lst, key=lambda x: x[0], reverse=True)
         return get_list(return_lst)[0:3]
@@ -261,11 +260,10 @@ class Graph:
         Then sort the list by index0 of the tuple and return the first three item with large score.
         """
         name_set = self.get_name_vertices()
-        input_vertex = self.vertices[name_input]
         lst = []
         for name in name_set:
             if name != name_input:
-                score = self.get_score_unpopular(input_vertex, self.vertices[name])
+                score = self.get_score_unpopular(name_input, name)
                 lst.append((score, name))
         return_lst = sorted(lst, key=lambda x: x[0], reverse=True)
         return get_list(return_lst)[0:3]
@@ -277,11 +275,10 @@ class Graph:
         Then sort the list by index0 of the tuple and return the first three item with large score.
         """
         name_set = self.get_name_vertices()
-        input_vertex = self.vertices[name_input]
         lst = []
         for name in name_set:
             if name != name_input:
-                score = self.get_score_custom(input_vertex, self.vertices[name], choice_lst)
+                score = self.get_score_custom(name_input, name, choice_lst)
                 lst.append((score, name))
         return_lst = sorted(lst, key=lambda x: x[0], reverse=True)
         return get_list(return_lst)[0:3]
