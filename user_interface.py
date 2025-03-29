@@ -17,7 +17,7 @@ import tkinter as tk
 from tkinter import ttk  # widgets
 import data_loader
 import os
-from PIL import Image, ImageTk  # Import Pillow modules
+from PIL import Image, ImageTk
 
 
 class ExerciseRecommendationApp:
@@ -266,6 +266,7 @@ class ExerciseRecommendationApp:
         new_search_button.pack(padx=10, side=tk.LEFT)
 
     def toggle_custom_frame(self, *args):
+        """Display the 3 choices if custom is selected"""
         if self.selected_score_type.get() == "custom":
             self.custom_frame.pack(fill="x", pady=20,
                                    after=self.calculation_frame.winfo_children()[2])
@@ -366,7 +367,7 @@ class ExerciseRecommendationApp:
                 # display images in the recommendation frame
                 rec_frame, _ = self.recommendation_frames[0]
 
-                # clear existing images
+                # clear existing images so no repeats
                 for widget in rec_frame.winfo_children():
                     if isinstance(widget, tk.Frame):
                         for img_widget in widget.winfo_children():
