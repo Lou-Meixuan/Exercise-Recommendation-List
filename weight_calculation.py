@@ -256,7 +256,7 @@ class Graph:
             if name != name_input:
                 score = self.get_score_popular(name_input, name)
                 lst.append((score, name))
-        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]), reverse=True)
+        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]))
         return get_list(return_lst)[0:3]
 
     def not_popular_recommendation(self, name_input: str) -> list:
@@ -274,7 +274,7 @@ class Graph:
             if name != name_input:
                 score = self.get_score_unpopular(name_input, name)
                 lst.append((score, name))
-        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]), reverse=True)
+        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]))
         return get_list(return_lst)[0:3]
 
     def custom_recommendation(self, name_input: str, choice_lst: list[str]) -> list:
@@ -293,7 +293,7 @@ class Graph:
             if name != name_input:
                 score = self.get_score_custom(name_input, name, choice_lst)
                 lst.append((score, name))
-        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]), reverse=True)
+        return_lst = sorted(lst, key=lambda x: (-x[0], x[1]))
         return get_list(return_lst)[0:3]
 
 
