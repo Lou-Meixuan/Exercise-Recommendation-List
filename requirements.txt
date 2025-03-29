@@ -16,7 +16,6 @@ This file is Copyright (c) 2025 CSC111 Student Team: Meixuan Lou, Zimo Huang, Ho
 tkinter
 typing
 csv
-math
 re
 pillow
 python_ta

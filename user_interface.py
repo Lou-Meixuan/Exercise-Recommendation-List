@@ -36,7 +36,9 @@ class ExerciseRecommendationApp:
         - last_choice: the 3rd and last custom choice selected by the user
         - exercise_frame: frame for the exercise selection screen
         - calculation_frame: frame for the calculation method selection screen
-        - recommendation_frame: The frame for the recommendation results screen
+        - recommendation_frame: the frame for the recommendation results screen
+        - instructions_label: label for displaying instructions for the recommended exercise
+        - recommendations: list of recommended exercises based on user input
     """
 
     def __init__(self, root):
@@ -75,6 +77,9 @@ class ExerciseRecommendationApp:
 
         # start with the exercise frame
         self.show_exercise_screen()
+
+        self.instructions_label = None
+        self.recommendations = []
 
 
     def setup_exercise_screen(self):
@@ -283,7 +288,12 @@ class ExerciseRecommendationApp:
         """Show the calculation screen"""
         self.exercise_frame.pack_forget()
         self.results_frame.pack_forget()
+        self.selected_score_type.set("Pick your preferred recommendation type")
         self.calculation_frame.pack(fill="both", expand=True)
+        self.first_choice.set("Pick your first choice")
+        self.second_choice.set("Pick your second choice")
+        self.last_choice.set("Pick your third choice")
+        self.recommendations = []
 
         # clear the images from the recommendation frame
         rec_frame, _ = self.recommendation_frames[0]
@@ -311,6 +321,7 @@ class ExerciseRecommendationApp:
         self.second_choice.set("Pick your second choice")
         self.last_choice.set("Pick your third choice")
         self.show_exercise_screen()
+        self.recommendations = []
 
     def calculate_and_show_results(self):
         """Calculate recs and show results, including pictures & instructions for #1 rec"""
@@ -319,34 +330,34 @@ class ExerciseRecommendationApp:
 
         self.selected_exercise_label.config(text=f"Based on your entries: {exercise}")
 
-        recommendations = []
+        self.recommendations = []
 
         if score_type == "popular":
-            recommendations = self.graph.popular_recommendation(exercise)
+            self.recommendations = self.graph.popular_recommendation(exercise)
         elif score_type == "unpopular":
-            recommendations = self.graph.not_popular_recommendation(exercise)
+            self.recommendations = self.graph.not_popular_recommendation(exercise)
         elif score_type == "custom":
             choice_lst = [
                 self.first_choice.get(),
                 self.second_choice.get(),
                 self.last_choice.get()
             ]
-            recommendations = self.graph.custom_recommendation(exercise, choice_lst)
+            self.recommendations = self.graph.custom_recommendation(exercise, choice_lst)
 
         # get name of the #1 recommendation
-        first_recommendation = recommendations[0] if recommendations else None
+        first_recommendation = self.recommendations[0] if self.recommendations else None
 
         # update frames
         for i, (_, name_label) in enumerate(self.recommendation_frames):
-            if i < len(recommendations):
-                name_label.config(text=recommendations[i])
+            if i < len(self.recommendations):
+                name_label.config(text=self.recommendations[i])
             else:
                 name_label.config(text="No recommendations available :(")
 
         # display the instructions and images for the #1 rec
         if first_recommendation:
             try:
-                # replace spaces with hyphens in the directory name
+                # replace spaces with - in the directory name
                 exercise_dir_name = first_recommendation.replace(" ", "_")
                 exercise_dir = os.path.join("exercises", exercise_dir_name)
                 image_path_0 = os.path.join(exercise_dir, "0.jpg")
@@ -372,6 +383,11 @@ class ExerciseRecommendationApp:
                         for img_widget in widget.winfo_children():
                             img_widget.destroy()
                         widget.destroy()
+                
+                # clear existing instructions so no repeats
+                if self.instructions_label:
+                    self.instructions_label.destroy()
+                    self.instructions_label = None
 
                 # create a frame to hold the images side by side
                 image_frame = tk.Frame(rec_frame)
@@ -379,17 +395,24 @@ class ExerciseRecommendationApp:
 
                 image_label_0 = tk.Label(image_frame, image=tk_img0)
                 image_label_0.image = tk_img0  # keep a reference to prevent garbage collection
-                image_label_0.pack(side="left")
+                image_label_0.pack(side=tk.LEFT)
 
                 image_label_1 = tk.Label(image_frame, image=tk_img1)
                 image_label_1.image = tk_img1  # keep a reference to prevent garbage collection
-                image_label_1.pack(side="left")
+                image_label_1.pack(side=tk.LEFT)
+
+                # display instructions
+                exercise_obj = next((ex for ex in self.exercises if ex.properties[0] == first_recommendation), None)
+                if exercise_obj:
+                    instructions = exercise_obj.instructions
+                    self.instructions_label = tk.Label(rec_frame, text=instructions, font=("Helvetica", 12), wraplength=500)
+                    self.instructions_label.pack(pady=5)
 
             except FileNotFoundError:
                 print(f"File not found: {exercise_dir}")
             except Exception as e:
                 print(f"Error displaying images: {e}")
-        
+
         # show results screen
         self.show_results_screen()
 
