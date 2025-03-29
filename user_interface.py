@@ -7,8 +7,19 @@ class ExerciseRecommendationApp:
     """
     A GUI app for exercise recommendation based on user input.
     
-    Preconditions:
-        - 
+    Instance Attributes:
+        - root: Tkinter root window
+        - exercises: list of all available exercises from data loader
+        - exercise_names: list of exercise names for the dropdown menu
+        - graph: a graph representation of the exercises
+        - selected_exercises: the exercise selected by the user
+        - selected_score_type: the calculation type selected by the user
+        - first_choice: the 1st custom choice selected by the user
+        - second_choice: the 2nd custom choice selected by the user
+        - last_choice: the 3rd and last custom choice selected by the user
+        - exercise_frame: frame for the exercise selection screen
+        - calculation_frame: frame for the calculation method selection screen
+        - recommendation_frame: The frame for the recommendation results screen
     """
 
     def __init__(self, root):
@@ -51,7 +62,8 @@ class ExerciseRecommendationApp:
     def setup_exercise_screen(self):
         """set the exercise picking screen w/ dropdown"""
 
-        title_label = tk.Label(self.exercise_frame, text="Pick an exercise to use for your recommendations!", font=("Helvetica", 24, "bold"))
+        title_label = tk.Label(self.exercise_frame, text="Pick an exercise to use for your recommendations!", 
+                               font=("Helvetica", 24, "bold"))
         title_label.pack()
 
         description = tk.Label(self.exercise_frame, 
@@ -116,7 +128,7 @@ class ExerciseRecommendationApp:
                                 "For more accurate recommendations,\n"
                                 "please do not select any option more than once!",
                                 font=("Helvetica", 14))
-        custom_label.pack(anchor="w")
+        custom_label.pack()
 
         # category options 
         category_options = [
@@ -124,8 +136,8 @@ class ExerciseRecommendationApp:
             "level",
             "mechanic",
             "equipment",
-            "primary_muscles",
-            "secondary_muscles"
+            "primary muscles",
+            "secondary muscles"
         ]
 
         # first choice
@@ -135,13 +147,13 @@ class ExerciseRecommendationApp:
         first_choice_label = tk.Label(first_choice_frame,
                                       text="First priority:",
                                       font=("Helvetica", 12))
-        first_choice_label.pack(side=tk.LEFT, padx=5)
+        first_choice_label.pack(padx=5)
 
         first_choice_dropdown = ttk.Combobox(first_choice_frame,
                                              textvariable=self.first_choice,
                                              values=category_options,
                                              width=30)
-        first_choice_dropdown.pack(side=tk.LEFT, padx=5)
+        first_choice_dropdown.pack(padx=5)
 
         # second choice
         second_choice_frame = tk.Frame(self.custom_frame)
@@ -150,13 +162,13 @@ class ExerciseRecommendationApp:
         second_choice_label = tk.Label(second_choice_frame, 
                                        text="Second priority:", 
                                        font=("Helvetica", 12))
-        second_choice_label.pack(side=tk.LEFT, padx=5)
+        second_choice_label.pack(padx=5)
         
         second_choice_dropdown = ttk.Combobox(second_choice_frame, 
                                             textvariable=self.second_choice,
                                             values=category_options,
                                             width=30)
-        second_choice_dropdown.pack(side=tk.LEFT, padx=5)
+        second_choice_dropdown.pack(padx=5)
 
         # last choice
         last_choice_frame = tk.Frame(self.custom_frame)
@@ -165,13 +177,13 @@ class ExerciseRecommendationApp:
         last_choice_label = tk.Label(last_choice_frame, 
                                      text="Third priority:", 
                                      font=("Helvetica", 12))
-        last_choice_label.pack(side=tk.LEFT, padx=5)
+        last_choice_label.pack(padx=5)
         
         last_choice_dropdown = ttk.Combobox(last_choice_frame, 
                                           textvariable=self.last_choice,
                                           values=category_options,
                                           width=30)
-        last_choice_dropdown.pack(side=tk.LEFT, padx=5)
+        last_choice_dropdown.pack(padx=5)
 
         # HIDE CUSTOM FRAME (only show when custom is selected)
         self.custom_frame.pack_forget()
@@ -188,15 +200,29 @@ class ExerciseRecommendationApp:
                                    font=("Helvetica", 12),
                                    width=15, height=2,
                                    bg="lightblue", fg="black")
-        back_button.pack(side=tk.LEFT, padx=10)
+        back_button.pack(padx=10)
 
         calculate_button = tk.Button(button_frame,
                                      text="Calculate",
                                      command=self.calculate_and_show_results,
                                      font=("Helvetica", 12),
                                      width=15, height=2)
-        calculate_button.pack(side=tk.LEFT, padx=10)
+        calculate_button.pack(padx=10)
 
+    def setup_results_screen(self):
+        """Setup the results screen"""
+        title_label = tk.Label(self.results_frame,
+                               text="Recommended Exercises",
+                               font=("Helvetica", 24, "bold"))
+        title_label.pack()
+
+        # selected exercise label
+        self.selected_exercise_label = tk.Label(self.results_frame,
+                                                text="Based on your entries: ",
+                                                font=("Helvetica", 14))
+        self.selected_exercise_label.pack()
+    
+    
     def calculate_and_show_results(self):
         pass
 
@@ -224,6 +250,7 @@ class ExerciseRecommendationApp:
         self.exercise_frame.pack_forget()
         self.calculation_frame.pack_forget()
         # self.results_frame.pack(fill="both", expand=True)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
