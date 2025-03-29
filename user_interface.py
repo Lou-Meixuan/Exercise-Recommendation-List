@@ -1,7 +1,24 @@
+"""CSC111 Winter 2025 Project2: Recommendation System For Gym Exercises
+
+Module Description
+==================
+This module contains the user interface class and its methods.
+
+Copyright and Usage Information
+===============================
+This file is created solely by students (Meixuan Lou, Zimo Huang, Hongyi Mei, Yunji Hwang) taking CSC111 at the
+University of Toronto St. George campus. All forms of distribution of this code, whether as given or with any changes,
+are expressly prohibited.
+
+This file is Copyright (c) 2025 CSC111 Student Team: Meixuan Lou, Zimo Huang, Hongyi Mei, Yunji Hwang
+"""
+
 import tkinter as tk
 from tkinter import ttk  # widgets
 import data_loader
-from weight_calculation import Graph
+import os
+from PIL import Image, ImageTk  # Import Pillow modules
+
 
 class ExerciseRecommendationApp:
     """
@@ -25,7 +42,7 @@ class ExerciseRecommendationApp:
     def __init__(self, root):
         """Initialize the app with a Tkinter root window."""
         self.root = root
-        self.root.geometry("800x600")
+        self.root.geometry("800x1000")
         self.root.title("Workout Wizard")
         
         self.exercises = data_loader.get_all_exercises()
@@ -58,6 +75,7 @@ class ExerciseRecommendationApp:
 
         # start with the exercise frame
         self.show_exercise_screen()
+
 
     def setup_exercise_screen(self):
         """set the exercise picking screen w/ dropdown"""
@@ -149,19 +167,14 @@ class ExerciseRecommendationApp:
                                       font=("Helvetica", 12))
         first_choice_label.pack(padx=5)
 
-        first_choice_dropdown = ttk.Combobox(first_choice_frame,
-                                             textvariable=self.first_choice,
-                                             values=category_options,
-                                             width=30)
+        first_choice_dropdown = ttk.Combobox(first_choice_frame, textvariable=self.first_choice, values=category_options, width=30)
         first_choice_dropdown.pack(padx=5)
 
         # second choice
         second_choice_frame = tk.Frame(self.custom_frame)
         second_choice_frame.pack(fill="x", pady=5)
         
-        second_choice_label = tk.Label(second_choice_frame, 
-                                       text="Second priority:", 
-                                       font=("Helvetica", 12))
+        second_choice_label = tk.Label(second_choice_frame, text="Second priority:", font=("Helvetica", 12))
         second_choice_label.pack(padx=5)
         
         second_choice_dropdown = ttk.Combobox(second_choice_frame, 
@@ -174,9 +187,7 @@ class ExerciseRecommendationApp:
         last_choice_frame = tk.Frame(self.custom_frame)
         last_choice_frame.pack(fill="x", pady=5)
         
-        last_choice_label = tk.Label(last_choice_frame, 
-                                     text="Third priority:", 
-                                     font=("Helvetica", 12))
+        last_choice_label = tk.Label(last_choice_frame, text="Third priority:", font=("Helvetica", 12))
         last_choice_label.pack(padx=5)
         
         last_choice_dropdown = ttk.Combobox(last_choice_frame, 
@@ -217,9 +228,7 @@ class ExerciseRecommendationApp:
         title_label.pack()
 
         # selected exercise label
-        self.selected_exercise_label = tk.Label(self.results_frame,
-                                                text="Based on your entries: ",
-                                                font=("Helvetica", 14))
+        self.selected_exercise_label = tk.Label(self.results_frame, text="Based on your entries: ", font=("Helvetica", 14))
         self.selected_exercise_label.pack()
 
         # results frame
@@ -232,7 +241,7 @@ class ExerciseRecommendationApp:
             rec_frame = tk.Frame(results_container, relief=tk.RIDGE, borderwidth=2)
             rec_frame.pack(pady=10, fill="x", padx=50)
             
-            rec_title = tk.Label(rec_frame, text=f"Recommendation {i+1}", font=("Helvetica", 14, "bold"))
+            rec_title = tk.Label(rec_frame, text=f"Recommendation {i + 1}", font=("Helvetica", 14, "bold"))
             rec_title.pack(pady=5)
             
             rec_name = tk.Label(rec_frame, text="", font=("Helvetica", 12))
@@ -268,6 +277,7 @@ class ExerciseRecommendationApp:
         self.calculation_frame.pack_forget()
         self.results_frame.pack_forget()
         self.exercise_frame.pack(fill="both", expand=True)
+        self.root.update_idletasks()
 
     def show_calculation_screen(self):
         """Show the calculation screen"""
@@ -275,14 +285,23 @@ class ExerciseRecommendationApp:
         self.results_frame.pack_forget()
         self.calculation_frame.pack(fill="both", expand=True)
 
+        # clear the images from the recommendation frame
+        rec_frame, _ = self.recommendation_frames[0]
+        if rec_frame:
+            for widget in rec_frame.winfo_children():
+                if isinstance(widget, tk.Label) and hasattr(widget, 'image'):
+                    widget.destroy()
+
         # toggle custom based on current selection
         self.toggle_custom_frame()
+        self.root.update_idletasks()
 
     def show_results_screen(self):
         """Show the results screen"""
         self.exercise_frame.pack_forget()
         self.calculation_frame.pack_forget()
         self.results_frame.pack(fill="both", expand=True)
+        self.root.update_idletasks()
 
     def reset_and_show_exercise_screen(self):
         """Reset selections & go back to prev screen"""
@@ -294,7 +313,7 @@ class ExerciseRecommendationApp:
         self.show_exercise_screen()
 
     def calculate_and_show_results(self):
-        """Calculate recs and show results"""
+        """Calculate recs and show results, including pictures & instructions for #1 rec"""
         exercise = self.selected_exercises.get()
         score_type = self.selected_score_type.get()
 
@@ -313,19 +332,73 @@ class ExerciseRecommendationApp:
                 self.last_choice.get()
             ]
             recommendations = self.graph.custom_recommendation(exercise, choice_lst)
-        
+
+        # get name of the #1 recommendation
+        first_recommendation = recommendations[0] if recommendations else None
+
         # update frames
         for i, (_, name_label) in enumerate(self.recommendation_frames):
             if i < len(recommendations):
                 name_label.config(text=recommendations[i])
             else:
                 name_label.config(text="No recommendations available :(")
+
+        # display the instructions and images for the #1 rec
+        if first_recommendation:
+            try:
+                # replace spaces with hyphens in the directory name
+                exercise_dir_name = first_recommendation.replace(" ", "_")
+                exercise_dir = os.path.join("exercises", exercise_dir_name)
+                image_path_0 = os.path.join(exercise_dir, "0.jpg")
+                image_path_1 = os.path.join(exercise_dir, "1.jpg")
+
+                # load the 2 images
+                img0 = Image.open(image_path_0)
+                img1 = Image.open(image_path_1)
+
+                # resize the images
+                img0 = img0.resize((200, 200))
+                img1 = img1.resize((200, 200))
+
+                tk_img0 = ImageTk.PhotoImage(img0)
+                tk_img1 = ImageTk.PhotoImage(img1)
+
+                # display images in the recommendation frame
+                rec_frame, _ = self.recommendation_frames[0]
+
+                # clear existing images
+                for widget in rec_frame.winfo_children():
+                    if isinstance(widget, tk.Frame):
+                        for img_widget in widget.winfo_children():
+                            img_widget.destroy()
+                        widget.destroy()
+
+                # create a frame to hold the images side by side
+                image_frame = tk.Frame(rec_frame)
+                image_frame.pack()
+
+                image_label_0 = tk.Label(image_frame, image=tk_img0)
+                image_label_0.image = tk_img0  # keep a reference to prevent garbage collection
+                image_label_0.pack(side="left")
+
+                image_label_1 = tk.Label(image_frame, image=tk_img1)
+                image_label_1.image = tk_img1  # keep a reference to prevent garbage collection
+                image_label_1.pack(side="left")
+
+            except FileNotFoundError:
+                print(f"File not found: {exercise_dir}")
+            except Exception as e:
+                print(f"Error displaying images: {e}")
         
         # show results screen
         self.show_results_screen()
 
 
 if __name__ == "__main__":
+    # import python_ta
+
+    # python_ta.check_all(config={'extra-imports': [], 'allowed-io': [], 'max-line-length': 120})
+
     root = tk.Tk()
     app = ExerciseRecommendationApp(root)
-    root.mainloop()    
+    root.mainloop()
