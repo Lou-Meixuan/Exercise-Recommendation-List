@@ -2,7 +2,7 @@ import weight_calculation
 import data_loader
 
 Exercise_list = data_loader.get_all_exercises()
-small = Exercise_list[0:10]
+small = Exercise_list
 lst = [x.properties for x in small]
 name = small[0].properties[0]
 print(name)
