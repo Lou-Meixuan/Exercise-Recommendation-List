@@ -154,8 +154,7 @@ class ExerciseRecommendationApp:
             "level",
             "mechanic",
             "equipment",
-            "primary muscles",
-            "secondary muscles"
+            "muscles"
         ]
 
         # first choice
