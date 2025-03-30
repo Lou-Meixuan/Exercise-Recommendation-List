@@ -2,7 +2,7 @@
 
 Module Description
 ==================
-This module contains the functions to clean up the dataset for our project
+This module contains the functions to clean up the dataset for our project. We only ran this once to clean the data, which was saved in the data file.
 
 Copyright and Usage Information
 ===============================
