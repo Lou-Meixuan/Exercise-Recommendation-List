@@ -422,11 +422,6 @@ class ExerciseRecommendationApp:
 
 
 if __name__ == "__main__":
-    import python_ta
-
-    python_ta.check_all(config={
-                        'max-line-length': 120, 'extra-imports': ["tkinter", "os", "PIL", "data_loader"], })
-
     root = tk.Tk()
     app = ExerciseRecommendationApp(root)
     root.mainloop()
