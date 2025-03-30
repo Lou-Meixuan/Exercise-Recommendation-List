@@ -43,8 +43,8 @@ if __name__ == '__main__':
     })
 
     # open input file and create an output CSV
-    with (open('ugly_data_exercises.txt', 'r', encoding='utf-8', newline='') as infile,
-          open('cleaned_data.csv', 'w', encoding='utf-8', newline='') as outfile):
+    with (open('datas/ugly_data_exercises.txt', 'r', encoding='utf-8', newline='') as infile,
+          open('datas/cleaned_data.csv', 'w', encoding='utf-8', newline='') as outfile):
         reader = csv.reader(infile)
         writer = csv.writer(outfile)
 
