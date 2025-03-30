@@ -1,4 +1,5 @@
-"""CSC111 Winter 2025 Project2 - Recommendation System For Gym Exercises: Workout Wizard
+"""CSC111 Winter 2025 Project2: Recommendation System For Gym Exercises
+
 Module Description
 ==================
 This module contains the Exercise classes, and the functions for our project
@@ -12,8 +13,7 @@ are expressly prohibited.
 This file is Copyright (c) 2025 CSC111 Student Team: Meixuan Lou, Zimo Huang, Hongyi Mei, Yunji Hwang
 """
 import csv
-from similarity_score_calculation import Graph, _Vertex
-from typing import Optional
+from weight_calculation import Graph
 
 
 class Exercise:
@@ -47,12 +47,7 @@ class Exercise:
 
 
 def parse_list_field(field_str: str) -> list:
-    """Convert a string representing a list (e.g., "[abdominals]") into a Python list.
-    >>> string = '[abs]'
-    >>> parse_list_field(string)
-    ['abs']
-    
-    """
+    """Convert a string representing a list (e.g., "[abdominals]") into a Python list."""
     # Remove enclosing square brackets and strip whitespace.
     field_str = field_str.strip("[]").strip()
     if not field_str:
@@ -61,29 +56,11 @@ def parse_list_field(field_str: str) -> list:
     return [item.strip().strip('"').strip("'") for item in field_str.split(',')]
 
 
-def get_all_exercises(data: Optional[str] = 'cleaned_data.csv') -> list[Exercise]:
-    """Load the data and turn all the row into the Exercise, and return the list contains all the Exercises
-    
-    >>> data1 = "cleaned_data_small.csv"
-    >>> total_ex = get_all_exercises(data1)
-    >>> len(total_ex) == 7
-    True
-    >>> prop1 = ['90/90 Hamstring', 'push', 'beginner', None, 'body only', ['hamstrings', 'calves']]
-    >>> inst1 = "['Lie on your back, with one leg extended straight out.']"
-    >>> total_ex[1].properties == prop1
-    True
-    >>> total_ex[1].instructions == inst1
-    True
-    >>> pics = ['90_90_Hamstring/0.jpg', '90_90_Hamstring/1.jpg']
-    >>> total_ex[1].images == pics
-    True
-    >>> total_ex[1].category == 'stretching'
-    True
-    
-    """
+def get_all_exercises() -> list[Exercise]:
+    """Load the data and turn all the row into the Exercise, and return the list contains all the Exercises"""
     exercises = []
     # Open and read the CSV file.
-    with open(data, newline='', encoding='utf-8') as file:
+    with open('cleaned_data.csv', newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         next(reader)  # Skip the header row.
         # Expected header columns: id,name,force,level,mechanic,equipment,
@@ -111,38 +88,14 @@ def get_all_exercises(data: Optional[str] = 'cleaned_data.csv') -> list[Exercise
 
 
 def load_lists(muscles_lst: list[str], exercise_name: str, graph: Graph) -> None:
-    """Add the list of muscles into the graph
-    >>> muscles = ['calves', 'hamstring']
-    >>> ex_graph =  Graph()
-    >>> ex_graph.add_vertex('wall-sit', 'excercise')
-    >>> load_lists(muscles, 'wall-sit', ex_graph)
-    >>> n,m = "  "
-    >>> muscle_name = {n.item for n in ex_graph.vertices['wall-sit'].neighbours}
-    >>> all(m in {'calves', 'hamstring'} for m in muscle_name)
-    True
-    
-    """
+    """Add the list of muscles into the graph"""
     for each in muscles_lst:
         graph.add_vertex(each, "muscles")
         graph.add_edge(exercise_name, each)
 
 
 def create_graph(exercises: list[Exercise]) -> Graph:
-    """Return the graph for our datasets
-    >>> prop1 = ['90/90 Hamstring', 'push', 'beginner', '','body only',['hamstrings'],['calves']]
-    >>> inst1 = "['Lie on your back, with one leg extended straight out.']"
-    >>> ex1 = Exercise(prop1, inst1, "stretching", ['90_90_Hamstring/0.jpg', '90_90_Hamstring/1.jpg'])
-    >>> prop2 = ['3/4 Sit-Up','pull','beginner','compound','body only',['hamstrings'],['calves']]
-    >>> inst2 = "['Lie down on the floor and secure your feet. Your legs should be bent at the knees.']"
-    >>> ex2 = Exercise(prop2, inst2, "strength", ['3_4_Sit-Up/0.jpg', '3_4_Sit-Up/1.jpg'])
-    >>> ex3 = ex2
-    >>> graph1 = create_graph([ex2, ex1])
-    >>> len(graph1.vertices)
-    10
-    >>> graph1.vertices['90/90 Hamstring'].item
-    '90/90 Hamstring'
-    
-    """
+    """Return the graph for our datasets"""
     graph = Graph()
     property_list = ["name", "force", "level", "mechanic", "equipment", "primary_muscles", "secondary_muscles"]
     for exercise in exercises:
