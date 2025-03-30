@@ -60,7 +60,7 @@ def get_all_exercises() -> list[Exercise]:
     """Load the data and turn all the row into the Exercise, and return the list contains all the Exercises"""
     exercises = []
     # Open and read the CSV file.
-    with open('cleaned_data.csv', newline='', encoding='utf-8') as file:
+    with open('data/cleaned_data.csv', newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         next(reader)  # Skip the header row.
         # Expected header columns: id,name,force,level,mechanic,equipment,
